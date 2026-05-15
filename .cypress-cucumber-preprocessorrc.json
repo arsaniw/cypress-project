@@ -1,0 +1,8 @@
+{
+  "nonGlobalStepDefinitions": false,
+  "stepDefinitions": [
+    "cypress/e2e/step_definitions/**/*.steps.js"
+  ],
+  "order": "definition",
+  "omitFiltered": true
+}

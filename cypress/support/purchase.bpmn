@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+  id="Definitions_1">
+
+  <bpmn:process id="PurchaseRequestProcess" isExecutable="true">
+
+    <!-- Start -->
+    <bpmn:startEvent id="StartEvent" name="Need for Purchase">
+      <bpmn:outgoing>flow1</bpmn:outgoing>
+    </bpmn:startEvent>
+
+    <!-- Department creates request -->
+    <bpmn:userTask id="CreateRequest" name="Create Purchase Request (Dept)">
+      <bpmn:incoming>flow1</bpmn:incoming>
+      <bpmn:outgoing>flow2</bpmn:outgoing>
+    </bpmn:userTask>
+
+    <!-- Send to Head -->
+    <bpmn:task id="SendHead" name="Send to Head Office">
+      <bpmn:incoming>flow2</bpmn:incoming>
+      <bpmn:outgoing>flow3</bpmn:outgoing>
+    </bpmn:task>
+
+    <!-- Check budget -->
+    <bpmn:userTask id="CheckBudget" name="Check Budget (Head)">
+      <bpmn:incoming>flow3</bpmn:incoming>
+      <bpmn:outgoing>flow4</bpmn:outgoing>
+    </bpmn:userTask>
+
+    <!-- Gateway -->
+    <bpmn:exclusiveGateway id="BudgetGateway" name="Budget Available?">
+      <bpmn:incoming>flow4</bpmn:incoming>
+      <bpmn:outgoing>flow5</bpmn:outgoing>
+      <bpmn:outgoing>flow6</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+
+    <!-- Approved -->
+    <bpmn:task id="ApproveOrder" name="Approve Purchase Order">
+      <bpmn:incoming>flow5</bpmn:incoming>
+      <bpmn:outgoing>flow7</bpmn:outgoing>
+    </bpmn:task>
+
+    <!-- Rejected -->
+    <bpmn:task id="RejectOrder" name="Reject / Revise Request">
+      <bpmn:incoming>flow6</bpmn:incoming>
+      <bpmn:outgoing>flow8</bpmn:outgoing>
+    </bpmn:task>
+
+    <!-- Send to CPS -->
+    <bpmn:task id="SendCPS" name="Send Copy to CPS">
+      <bpmn:incoming>flow7</bpmn:incoming>
+      <bpmn:outgoing>flow9</bpmn:outgoing>
+    </bpmn:task>
+
+    <!-- End -->
+    <bpmn:endEvent id="EndEvent" name="End Process">
+      <bpmn:incoming>flow8</bpmn:incoming>
+      <bpmn:incoming>flow9</bpmn:incoming>
+    </bpmn:endEvent>
+
+    <!-- Flows -->
+    <bpmn:sequenceFlow id="flow1" sourceRef="StartEvent" targetRef="CreateRequest"/>
+    <bpmn:sequenceFlow id="flow2" sourceRef="CreateRequest" targetRef="SendHead"/>
+    <bpmn:sequenceFlow id="flow3" sourceRef="SendHead" targetRef="CheckBudget"/>
+    <bpmn:sequenceFlow id="flow4" sourceRef="CheckBudget" targetRef="BudgetGateway"/>
+    <bpmn:sequenceFlow id="flow5" sourceRef="BudgetGateway" targetRef="ApproveOrder"/>
+    <bpmn:sequenceFlow id="flow6" sourceRef="BudgetGateway" targetRef="RejectOrder"/>
+    <bpmn:sequenceFlow id="flow7" sourceRef="ApproveOrder" targetRef="SendCPS"/>
+    <bpmn:sequenceFlow id="flow8" sourceRef="RejectOrder" targetRef="EndEvent"/>
+    <bpmn:sequenceFlow id="flow9" sourceRef="SendCPS" targetRef="EndEvent"/>
+
+  </bpmn:process>
+</bpmn:definitions>

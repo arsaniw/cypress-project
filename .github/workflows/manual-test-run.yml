@@ -1,0 +1,67 @@
+name: Manual Cypress Test Run
+
+on:
+  workflow_dispatch:
+    inputs:
+      browser:
+        description: 'Browser to run tests on'
+        required: true
+        default: 'chrome'
+        type: choice
+        options:
+          - chrome
+          - firefox
+          - edge
+      spec:
+        description: 'Test spec pattern'
+        required: false
+        default: 'cypress/e2e/**/*.cy.js'
+      record:
+        description: 'Record test results'
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  manual-run:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16.x'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Cypress tests
+        uses: cypress-io/github-action@v5
+        with:
+          browser: ${{ github.event.inputs.browser }}
+          spec: ${{ github.event.inputs.spec }}
+          record: ${{ github.event.inputs.record }}
+          config-file: cypress.config.js
+        env:
+          CYPRESS_BASE_URL: https://practicesoftwaretesting.com
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results-${{ github.event.inputs.browser }}
+          path: |
+            cypress/screenshots/
+            cypress/videos/
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## Test Execution Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- **Browser**: ${{ github.event.inputs.browser }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Spec**: ${{ github.event.inputs.spec }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Time**: $(date)" >> $GITHUB_STEP_SUMMARY

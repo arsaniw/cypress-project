@@ -1,0 +1,65 @@
+name: Cypress E2E Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  cypress-run:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [16.x]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Cypress tests - Traditional Tests
+        uses: cypress-io/github-action@v5
+        with:
+          browser: chrome
+          spec: cypress/e2e/**/*.cy.js
+          config-file: cypress.config.js
+        env:
+          CYPRESS_BASE_URL: https://practicesoftwaretesting.com
+
+      - name: Run Cypress tests - Feature Files (BDD)
+        uses: cypress-io/github-action@v5
+        with:
+          browser: chrome
+          spec: cypress/e2e/**/*.feature
+          config-file: cypress.config.js
+        env:
+          CYPRESS_BASE_URL: https://practicesoftwaretesting.com
+        continue-on-error: true
+
+      - name: Upload screenshots on failure
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: cypress-screenshots
+          path: cypress/screenshots
+
+      - name: Upload videos
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: cypress-videos
+          path: cypress/videos
+
+      - name: Report test results
+        if: always()
+        run: |
+          echo "::notice title=Cypress Tests Completed::Tests execution finished. Check artifacts for details."

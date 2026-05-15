@@ -1,0 +1,38 @@
+{
+  "name": "cypress-project",
+  "version": "1.0.0",
+  "description": "Comprehensive E2E testing suite for Practice Software Testing website using Cypress with POM and BDD",
+  "main": "index.js",
+  "scripts": {
+    "test": "cypress run",
+    "test:watch": "cypress run --watch",
+    "test:open": "cypress open",
+    "test:traditional": "cypress run --spec 'cypress/e2e/**/*.cy.js'",
+    "test:bdd": "cypress run --spec 'cypress/e2e/**/*.feature'",
+    "test:chrome": "cypress run --browser chrome",
+    "test:firefox": "cypress run --browser firefox",
+    "test:edge": "cypress run --browser edge",
+    "test:headless": "cypress run --headless",
+    "test:mobile": "cypress run --spec 'cypress/e2e/**/*.cy.js' --config viewportWidth=375,viewportHeight=812",
+    "test:debug": "cypress open --env log_level=debug",
+    "test:report": "cypress run --reporter mochawesome",
+    "ci": "cypress run --headless --browser chrome"
+  },
+  "keywords": [
+    "cypress",
+    "e2e",
+    "testing",
+    "bdd",
+    "cucumber",
+    "page-object-model",
+    "automation",
+    "qa"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "cypress": "^13.17.0",
+    "@badeball/cypress-cucumber-preprocessor": "^20.0.0",
+    "@bahmutov/cypress-esbuild-preprocessor": "^2.2.2"
+  }
+}

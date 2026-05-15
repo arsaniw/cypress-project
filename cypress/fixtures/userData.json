@@ -1,0 +1,21 @@
+{
+  "searchTerm": "hammer",
+  "category": "Hand Tools",
+  "brand": "Bahco",
+  "price": {
+    "min": 10,
+    "max": 100
+  },
+  "products": {
+    "hammer": "hammer",
+    "pliers": "pliers",
+    "screwdriver": "screwdriver"
+  },
+  "filters": {
+    "inStock": true,
+    "onSale": false
+  },
+  "pagination": {
+    "itemsPerPage": 20
+  }
+}
