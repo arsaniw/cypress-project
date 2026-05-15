@@ -12,14 +12,14 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [16.x]
+        node-version: [20.x]
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Set up Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
@@ -27,26 +27,22 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run Cypress tests - Traditional Tests
-        uses: cypress-io/github-action@v5
+      - name: Run Cypress tests
+        uses: cypress-io/github-action@v6
         with:
           browser: chrome
           spec: cypress/e2e/**/*.cy.js
-          config-file: cypress.config.js
         env:
           CYPRESS_BASE_URL: https://practicesoftwaretesting.com
 
-      - name: Run Cypress tests - Feature Files (BDD)
-        uses: cypress-io/github-action@v5
+      - name: Run BDD tests
+        uses: cypress-io/github-action@v6
         with:
           browser: chrome
           spec: cypress/e2e/**/*.feature
-          config-file: cypress.config.js
-        env:
-          CYPRESS_BASE_URL: https://practicesoftwaretesting.com
         continue-on-error: true
 
-      - name: Upload screenshots on failure
+      - name: Upload screenshots
         if: failure()
         uses: actions/upload-artifact@v4
         with:
@@ -59,8 +55,3 @@ jobs:
         with:
           name: cypress-videos
           path: cypress/videos
-
-      - name: Report test results
-        if: always()
-        run: |
-          echo "::notice title=Cypress Tests Completed::Tests execution finished. Check artifacts for details."
